@@ -1,6 +1,5 @@
 numpy
 pandas
 matplotlib
-yaml
-glob
 openpyxl 
+xlrd

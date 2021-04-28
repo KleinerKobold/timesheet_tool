@@ -12,7 +12,7 @@ import os
 
 
 
-list_of_files = glob.glob('D:/Projekte/ADV/T*.xls') # * means all if need specific format then *.csv
+list_of_files = glob.glob('./T*.xls') # * means all if need specific format then *.csv
 latest_file = Path(max(list_of_files, key=os.path.getctime))
 print(f"Benutzte Daten: {latest_file}")
 
@@ -25,7 +25,7 @@ df = df.rename(columns={"Dauer (rel.)": "Arbeitszeit"})
 
 df_excel = df.groupby(['Datum','Projekt']).sum()
 sheet_name = "Timmesheet"
-new_file = "D:/Projekte/ADV/Calced_timesheet.xlsx"
+new_file = "./Calced_timesheet.xlsx"
 with pd.ExcelWriter(new_file, mode='w', engine='openpyxl') as writer:  
     df_excel.to_excel(writer, sheet_name= sheet_name)
 

@@ -9,7 +9,13 @@ import yaml
 import sys
 import glob
 import os
-
+import math
+def visual(percent):
+    counter = math.floor(float(percent)/3)
+    rval = ""
+    for i in range (counter):
+        rval += "#"
+    return rval
 
 
 list_of_files = glob.glob('./T*.xls') # * means all if need specific format then *.csv
@@ -42,7 +48,9 @@ print(f"\n\tSumme der Differenz: {'{0:.2f}h'.format(df_week['Diff'].sum())}")
 
 df_prj = df.groupby(['Projekt']).sum()
 df_prj['percent']  = (df_prj['Arbeitszeit'] / df_prj['Arbeitszeit'].sum()) * 100
+df_prj['percent_visual'] = df_prj.apply(lambda row : visual(row['percent']), axis = 1)
 df_prj['percent'] = pd.Series(["{0:.2f}%".format(val) for val in df_prj['percent']], index = df_prj.index)
+
 df_prj.drop('Woche',axis='columns', inplace=True)
 print("\nVerteilung:")
 print(df_prj)

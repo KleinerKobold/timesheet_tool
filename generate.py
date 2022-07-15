@@ -10,6 +10,15 @@ import sys
 import glob
 import os
 import math
+import plotext as plt
+
+def print_plotext(items, values):
+    plt.bar(items, values, orientation = 'h', width = 3/5)
+    plt.title('Verteilung')
+    plt.clc()
+    plt.plotsize(100, 2 * len(items) + 4)
+    plt.show()
+    
 def visual(percent):
     counter = math.floor(float(percent)/3)
     rval = ""
@@ -51,9 +60,11 @@ df_prj['percent']  = (df_prj['Arbeitszeit'] / df_prj['Arbeitszeit'].sum()) * 100
 df_prj['percent_visual'] = df_prj.apply(lambda row : visual(row['percent']), axis = 1)
 df_prj['percent'] = pd.Series(["{0:.2f}%".format(val) for val in df_prj['percent']], index = df_prj.index)
 
+
 df_prj.drop('Woche',axis='columns', inplace=True)
 print("\nVerteilung:")
 print(df_prj)
+print_plotext(df_prj.index.array.to_numpy(),df_prj['Arbeitszeit'].to_numpy())
 
 print(f"Geschrieben: {new_file}")
 

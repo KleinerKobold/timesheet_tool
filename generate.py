@@ -47,7 +47,7 @@ with pd.ExcelWriter(new_file, mode='w', engine='openpyxl') as writer:
 #Information for cli
 print("\n#################\nWochen:\n")
 
-df['Woche'] = df['Datum'].dt.week
+df['Woche'] = df['Datum'].dt.isocalendar().week
 
 df_week = df.groupby(['Woche']).agg({"Arbeitszeit": np.sum, "Datum": pd.Series.nunique})
 df_week['Soll_Zeit']= df_week['Datum'] * 7.8

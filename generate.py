@@ -12,6 +12,53 @@ import os
 import math
 import plotext as plt
 
+def format_excel(new_file, sheet_name):
+    # Format excel
+
+    from openpyxl import load_workbook
+    from openpyxl.styles import PatternFill, Color
+    #pattern = PatternFill(bgColor="#346A8C", fill_type = "solid")
+    wb = load_workbook(filename = new_file)
+    wb.active = wb[sheet_name]
+    ws = wb.active
+
+
+    blueFill = PatternFill(start_color='00CCFFFF',
+                    end_color='00CCFFFF',
+                    fill_type='solid')
+    orangeFill = PatternFill(start_color='00FFCC99',
+                    end_color='00FFCC99',
+                    fill_type='solid')
+    pinkFill = PatternFill(start_color='00FF99CC',
+                    end_color='00FF99CC',
+                    fill_type='solid')
+
+    def format_cell(row_number, style):
+        ws.cell(row_number, 2).fill = style
+        ws.cell(row_number, 3).fill = style
+        ws.cell(row_number, 4).fill = style
+
+    with open('config.yaml') as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+        for row_number in range(1,ws.max_row+1):
+            for dictonary in config["colors"]:
+                for key in dictonary.keys():
+                    if ws.cell(row_number, 2).value == key:
+                        format_cell(row_number, PatternFill(start_color=Color(dictonary[key]),
+                                                            end_color=Color(dictonary[key]),
+                                                            fill_type='solid'))
+    #resize
+    dims = {}
+    for row in ws.rows:
+        for cell in row:
+            if cell.value:
+                dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))    
+
+    for col, value in dims.items():
+        ws.column_dimensions[str(col)].width = value
+
+    wb.save(new_file)
+
 def print_plotext(items, values):
     plt.bar(items, values, orientation = 'h', width = 3/5)
     plt.title('Verteilung')
@@ -53,13 +100,25 @@ df_week = df.groupby(['Woche']).agg({"Arbeitszeit": np.sum, "Datum": pd.Series.n
 df_week['Soll_Zeit']= df_week['Datum'] * 7.8
 df_week['Diff'] = df_week['Arbeitszeit'] - df_week['Soll_Zeit']
 print(df_week)
+with pd.ExcelWriter(new_file, mode='a', engine='openpyxl') as writer:  
+    df_week.to_excel(writer, sheet_name= "Zeit pro Woche")
 print(f"\n\tSumme der Differenz: {'{0:.2f}h'.format(df_week['Diff'].sum())}")
+
+
 
 df_prj = df.groupby(['Projekt']).sum()
 df_prj['percent']  = (df_prj['Arbeitszeit'] / df_prj['Arbeitszeit'].sum()) * 100
 df_prj['percent_visual'] = df_prj.apply(lambda row : visual(row['percent']), axis = 1)
 df_prj['percent'] = pd.Series(["{0:.2f}%".format(val) for val in df_prj['percent']], index = df_prj.index)
 
+
+df_perWeek = df.groupby(['Woche','Projekt']).agg({'Arbeitszeit':['sum']})
+df_perWeek['percent'] = df_perWeek.Arbeitszeit['sum']/39 *100
+df_perWeek['percent'] = pd.Series(["{0:.0f}%".format(val) for val in df_perWeek['percent']], index = df_perWeek.index)
+
+sheet_name2 = "ProjectPerWeek"
+with pd.ExcelWriter(new_file, mode='a', engine='openpyxl') as writer:  
+    df_perWeek.to_excel(writer, sheet_name= sheet_name2)
 
 df_prj.drop('Woche',axis='columns', inplace=True)
 print("\nVerteilung:")
@@ -68,47 +127,7 @@ print_plotext(df_prj.index.array.to_numpy(),df_prj['Arbeitszeit'].to_numpy())
 
 print(f"Geschrieben: {new_file}")
 
-# Format excel
+format_excel(new_file, sheet_name2)
+format_excel(new_file, sheet_name)
 
-from openpyxl import load_workbook
-from openpyxl.styles import PatternFill, Color
-#pattern = PatternFill(bgColor="#346A8C", fill_type = "solid")
-wb = load_workbook(filename = new_file)
-ws = wb.active
-
-blueFill = PatternFill(start_color='00CCFFFF',
-                   end_color='00CCFFFF',
-                   fill_type='solid')
-orangeFill = PatternFill(start_color='00FFCC99',
-                   end_color='00FFCC99',
-                   fill_type='solid')
-pinkFill = PatternFill(start_color='00FF99CC',
-                   end_color='00FF99CC',
-                   fill_type='solid')
-
-def format_cell(row_number, style):
-    ws.cell(row_number, 2).fill = style
-    ws.cell(row_number, 3).fill = style
-    ws.cell(row_number, 4).fill = style
-
-with open('config.yaml') as f:
-    config = yaml.load(f, Loader=yaml.FullLoader)
-    for row_number in range(1,ws.max_row+1):
-        for dictonary in config["colors"]:
-            for key in dictonary.keys():
-                if ws.cell(row_number, 2).value == key:
-                    format_cell(row_number, PatternFill(start_color=Color(dictonary[key]),
-                                                        end_color=Color(dictonary[key]),
-                                                        fill_type='solid'))
-#resize
-dims = {}
-for row in ws.rows:
-    for cell in row:
-        if cell.value:
-            dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))    
-
-for col, value in dims.items():
-    ws.column_dimensions[str(col)].width = value
-
-wb.save(new_file)
    

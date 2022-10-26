@@ -5,22 +5,33 @@ Dieses Tool hilft dabei erfasste Arbeitszeit von der Timesheet-App leichter zu a
 
 # Anleitung
 
-## Konfiguration 
+## App bekommen
+
+[Android](https://play.google.com/store/apps/details?id=com.rauscha.apps.timesheet&referrer=utm_source%3Dlanding%26utm_medium%3Dbanner%26utm_campaign%3Ddownload)
+
+[Apple](https://timesheet.io/img/webp/appstore.webp)
+
+## Konfiguration der App
 Die App kann man wie gewünscht einstellen, es gibt nur hier eine Einstellung die getroffen werden soll:
-[Einstellung](img/Einstellungen.jpg)
+
+<img src="img/Einstellungen.jpg" alt="Einstellungen" style="width:200px;"/>
+
 - Datumsformat yyyy-MM-dd
 - Format Dauer XX.XX h
 
-## Export 
+## Export aus der App
 Die App kann dann die Daten exportieren:
-![Export](img/Export.jpg =250x)
+
+<img src="img/Export.jpg" alt="Export" style="width:200px;"/>
+
 
 Dabei sollte man den Zeitrahmen einstellen. Der Export erfolgt nach XLS.
 
 Die Felder für den Export sind wie folgt zu treffen:
 
-![Export_1](img/Export_einstellung_1.jpg =250x)
-![Export_2](img/Export_einstellung_2.jpg =250x)
+<img src="img/Export_einstellung_1.jpg" alt="Export_einstellung_1" style="width:200px;"/>
+<img src="img/Export_einstellung_2.jpg" alt="Export_einstellung_2" style="width:200px;"/>
+
 
 ## Python Skript
 Die Python abhängigkeiten müssen installiert werden. Dies kann man einfach machen mit dem Befehl

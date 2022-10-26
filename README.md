@@ -13,14 +13,14 @@ Die App kann man wie gewünscht einstellen, es gibt nur hier eine Einstellung di
 
 ## Export 
 Die App kann dann die Daten exportieren:
-![Export](img/Export.jpg)
+![Export](img/Export.jpg =250x)
 
 Dabei sollte man den Zeitrahmen einstellen. Der Export erfolgt nach XLS.
 
 Die Felder für den Export sind wie folgt zu treffen:
 
-![Export_1](img/Export_einstellung_1.jpg)
-![Export_2](img/Export_einstellung_2.jpg)
+![Export_1](img/Export_einstellung_1.jpg =250x)
+![Export_2](img/Export_einstellung_2.jpg =250x)
 
 ## Python Skript
 Die Python abhängigkeiten müssen installiert werden. Dies kann man einfach machen mit dem Befehl

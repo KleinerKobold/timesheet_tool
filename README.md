@@ -34,15 +34,28 @@ Die Felder für den Export sind wie folgt zu treffen:
 
 
 ## Python Skript
+
+### Abhängigkeiten installieren
 Die Python abhängigkeiten müssen installiert werden. Dies kann man einfach machen mit dem Befehl
 
 ```
 pip install -r requirements.txt
 ```
+### Konfiguration von Farben
+Danach sollte die config.yaml bereitgestellt werden, eine Vorlage ist unter config.example.yaml zu finden.
+```
+colors:
+  - "Team 1": "00CCFF"
+  - "Team 2": "f2b24b"
+  - "Team 2 customer": "f2b24b"
+  - "Division 1": "00CCFF"
+  - "Intern": "f2594b"
+```
+Hier kann man in der Konfig die Farben für Projekte einstellen. Dies Hilft dabei schneller die Projekte in andere Systeme abzuschreiben.
 
-Danach sollte die config.yaml bereitgestellt werden, eine vorlage ist unter config.example.yaml zu finden.
+### Skript ausführen
 
-Die Exportierten Daten kommen in den Ordner des Skriptes, die Berechnungen starten dann mit 
+Die exportierten Daten kommen in den Ordner des Skriptes, die Berechnungen starten dann mit 
 
 ```
 python generate.py

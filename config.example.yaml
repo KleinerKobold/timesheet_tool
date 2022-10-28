@@ -4,3 +4,10 @@ colors:
   - "Team 2 customer": "f2b24b"
   - "Division 1": "00CCFF"
   - "Intern": "f2594b"
+
+csv:
+  "fileName": "export.csv"
+  elements:
+    "Team 1": "0001"
+    "Team 2": "0002"
+    "Team 2 customer": "1002"

@@ -53,6 +53,22 @@ colors:
 ```
 Hier kann man in der Konfig die Farben für Projekte einstellen. Dies Hilft dabei schneller die Projekte in andere Systeme abzuschreiben.
 
+### Konfiguration von CSV Exporten
+
+Folgender Teil in der config steuert den Export nach CSV.
+```
+csv:
+  "fileName": "export.csv"
+  "round": True
+  elements:
+    "Team 1": "0001"
+    "Team 2": "0002"
+    "Team 2 customer": "1002"
+```
+Es werden nur Elemente exportiert, die entsprechend unter Elements aufgeführt sind. Dabei werden die Namen der Projekte in die Werte in Elements geändert. So können Kontennummern angegeben werden. 
+Der Parameter Round sagt, ob die Stunden auf die nächsten vollen 1/4 aufgerundet werden sollen oder nicht. 
+Der Parameter Filename nennt den Speicherot der CSV Datei.
+
 ### Skript ausführen
 
 Die exportierten Daten kommen in den Ordner des Skriptes, die Berechnungen starten dann mit 

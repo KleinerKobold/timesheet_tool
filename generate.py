@@ -29,17 +29,14 @@ def round_hours(hours):
     return full_hours+part
 
 def csv_export(df):
-    fileName, elements = None,{}
+    fileName, elements, round = None,{}, False
     with open('config.yaml') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
-        if config["csv"]:
-            if config["csv"]["fileName"]:
-                fileName = config["csv"]["fileName"]
-            else: return None
-            if config["csv"]["elements"]:
-                elements = config["csv"]["elements"]
-            else: return None
-        else:
+        try: 
+            fileName = config["csv"]["fileName"]
+            elements = config["csv"]["elements"]
+            round = config["csv"]["round"]
+        except:
             return None
 
     df2 = df[df.Projekt.isin(elements.keys())]
@@ -51,7 +48,8 @@ def csv_export(df):
     #df2['date'] = df2['date'].dt.strftime('%d.%m.%Y')
 
     df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date','element']).sum()
-    df_grp["hours"] = df_grp["hours"].map(round_hours)
+    if round: 
+        df_grp["hours"] = df_grp["hours"].map(round_hours)
     df_grp["comment"] = ""
     df_grp["aktivitätencode"] = ""
     #df_grp['date'] = df_grp['date'].dt.strftime('%d.%m.%Y')

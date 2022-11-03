@@ -2,3 +2,7 @@ config.yaml
 *.ipynb
 *.xls*
 *.csv
+dist/*
+build/*
+*/*pycache*/*
+*.egg-info/*

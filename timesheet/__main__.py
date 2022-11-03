@@ -12,6 +12,25 @@ import math
 import plotext as plt
 import math
 
+def get_config():
+    homedir = Path.home()
+    timesheet_dir = homedir / ".timesheet"
+    config_file = timesheet_dir / 'config.yaml'
+    try:
+        config=dict()
+        with open(config_file) as f:
+            config = yaml.load(f, Loader=yaml.FullLoader)
+            return config
+    except:
+        if not timesheet_dir.exists():
+            timesheet_dir.mkdir()
+        data = dict()
+        yaml.safe_dump(data)
+        with open(config_file, 'w') as outfile:
+            yaml.safe_dump(data, outfile, default_flow_style=False)
+            print(f"Keine config vorhanden, config wurde neu erstellt in {config_file}\n BITTE ANPASSEN")
+        pass
+
 def round_hours(hours):
     full_hours = math.floor(hours)
     part = hours % 1
@@ -30,14 +49,13 @@ def round_hours(hours):
 
 def csv_export(df):
     fileName, elements, round = None,{}, False
-    with open('config.yaml') as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
-        try: 
-            fileName = config["csv"]["fileName"]
-            elements = config["csv"]["elements"]
-            round = config["csv"]["round"]
-        except:
-            return None
+    config = get_config()
+    try: 
+        fileName = config["csv"]["fileName"]
+        elements = config["csv"]["elements"]
+        round = config["csv"]["round"]
+    except:
+        return None
 
     df2 = df[df.Projekt.isin(elements.keys())]
     df2["element"] = df2["Projekt"].map(elements)
@@ -87,8 +105,9 @@ def format_excel(new_file, sheet_name):
         ws.cell(row_number, 3).fill = style
         ws.cell(row_number, 4).fill = style
 
-    with open('config.yaml') as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
+
+    config = get_config()
+    if config:
         for row_number in range(1,ws.max_row+1):
             for dictonary in config["colors"]:
                 for key in dictonary.keys():
@@ -132,9 +151,18 @@ def read_excel(filename):
     df = df.rename(columns={"Dauer (rel.)": "Arbeitszeit"})
     return df
 
+def get_latest_input():
+    try:
+        list_of_files = glob.glob('./T*.xls') # * means all if need specific format then *.csv
+        return  Path(max(list_of_files, key=os.path.getctime))
+    except:
+        return None
+
 def main():
-    list_of_files = glob.glob('./T*.xls') # * means all if need specific format then *.csv
-    latest_file = Path(max(list_of_files, key=os.path.getctime))
+    latest_file = get_latest_input()
+    if not latest_file:
+        print("Keine Datei gefunden")
+        return -1
     print(f"Benutzte Daten: {latest_file}")
 
     df = read_excel(latest_file)

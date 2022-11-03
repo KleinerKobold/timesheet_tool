@@ -35,14 +35,28 @@ Die Felder für den Export sind wie folgt zu treffen:
 
 ## Python Skript
 
-### Abhängigkeiten installieren
-Die Python abhängigkeiten müssen installiert werden. Dies kann man einfach machen mit dem Befehl
+### Bauen und Installation
+
+Es sollte auf dem System ein Python installiert sein > 3.9 und git
 
 ```
-pip install -r requirements.txt
+  git clone https://github.com/KleinerKobold/timesheet_tool.git
+  cd timesheet_tool
+  pip install --upgrade setuptools
+  pip install --upgrade build
+  python -m build
+  pip install . 
 ```
-### Konfiguration von Farben
+
+### Konfiguration 
+
 Danach sollte die config.yaml bereitgestellt werden, eine Vorlage ist unter config.example.yaml zu finden.
+Die Datei wird im Pfad `c:/users/user/.timesheet/config.yaml` erwartet
+Das Programm kann aber auch ohne eine Konfiguration arbeiten.
+
+#### Konfiguration von Farben
+
+Die Farben in der Excel Datei können in der Konfigration angepasst werden.
 ```
 colors:
   - "Team 1": "00CCFF"
@@ -53,9 +67,9 @@ colors:
 ```
 Hier kann man in der Konfig die Farben für Projekte einstellen. Dies Hilft dabei schneller die Projekte in andere Systeme abzuschreiben.
 
-### Konfiguration von CSV Exporten
+#### Konfiguration von CSV Exporten
 
-Folgender Teil in der config steuert den Export nach CSV.
+Folgender Teil in der Konfiguration steuert den Export nach CSV.
 ```
 csv:
   "fileName": "export.csv"
@@ -71,10 +85,5 @@ Der Parameter Filename nennt den Speicherot der CSV Datei.
 
 ### Skript ausführen
 
-Die exportierten Daten kommen in den Ordner des Skriptes, die Berechnungen starten dann mit 
-
-```
-python generate.py
-```
-
+Man legt den Excel Export der Daten in ein Verzeichnis und fürt dort `timesheet` aus. 
 Auf der Konsole gibt es einige Ausgaben, dazu kommt eine excel Datei als Ausgabe, Calced_timesheet.xlsx.

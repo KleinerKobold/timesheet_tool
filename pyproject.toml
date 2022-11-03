@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["timesheet"]
+
+[project]
+name = "timesheet_tool"
+version = "0.0.1"
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "openpyxl",
+    "xlrd",
+    "plotext",
+    "pyyaml",
+    'importlib-metadata; python_version<"3.10"',
+]
+
+[project.scripts]
+timesheet = "timesheet.__main__:main"

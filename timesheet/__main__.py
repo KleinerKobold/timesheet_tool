@@ -170,12 +170,11 @@ def main(argv):
                 print('timesheet -i <inputfile>')
                 sys.exit()
             elif opt in ("-i", "--ifile"):
-                latest_file = arg
+                latest_file = Path(arg[1:])
     except:
         pass
 
-    
-    if not latest_file:
+    if not latest_file or not latest_file.exists():
         print("Keine Datei gefunden")
         return -1
     print(f"Benutzte Daten: {latest_file}")

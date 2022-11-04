@@ -8,6 +8,7 @@ from pathlib import Path
 import yaml
 import glob
 import os
+import sys, getopt
 import math
 import plotext as plt
 import math
@@ -158,8 +159,22 @@ def get_latest_input():
     except:
         return None
 
-def main():
+def main(argv):
+
     latest_file = get_latest_input()
+    try:
+        opts, args = getopt.getopt(argv,"hi:o:",["ifile="])
+        
+        for opt, arg in opts:
+            if opt == '-h':
+                print('timesheet -i <inputfile>')
+                sys.exit()
+            elif opt in ("-i", "--ifile"):
+                latest_file = arg
+    except:
+        pass
+
+    
     if not latest_file:
         print("Keine Datei gefunden")
         return -1
@@ -215,5 +230,5 @@ def main():
     format_excel(new_file, sheet_name)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
    

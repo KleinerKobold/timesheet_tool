@@ -49,7 +49,7 @@ def round_hours(hours):
     return full_hours+part
 
 def csv_export(df):
-    fileName, elements, round = None,{}, False
+    fileName, elements, round, codes = None, dict(), False, dict()
     config = get_config()
     try: 
         fileName = config["csv"]["fileName"]
@@ -57,21 +57,25 @@ def csv_export(df):
         round = config["csv"]["round"]
     except:
         return None
+    try:
+        codes = config["csv"]["codes"]
+    except:
+        print("config: no codes found")
+        pass
+    if codes: 
+        df["aktivitätencode"] = df["Projekt"].map(codes)
+        df["aktivitätencode"] = df["aktivitätencode"].fillna('')
     df["element"] = df["Projekt"].map(elements)
     df2 = df[df['element'].notnull()]
 
-    #df2 = df2.rename(columns={"Projekt": "element"})
     df2 = df2.rename(columns={"Datum": "date"})
     df2 = df2.rename(columns={"Arbeitszeit": "hours"})
     df2.sort_values(by='date', inplace=True)
-    #df2['date'] = df2['date'].dt.strftime('%d.%m.%Y')
-
-    df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date','element']).sum()
+    
+    df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date','element','aktivitätencode']).sum()
     if round: 
         df_grp["hours"] = df_grp["hours"].map(round_hours)
     df_grp["comment"] = ""
-    df_grp["aktivitätencode"] = ""
-    #df_grp['date'] = df_grp['date'].dt.strftime('%d.%m.%Y')
     df_grp.to_csv(fileName,sep=';')
 
     fd = pd.read_csv(fileName, sep=";")

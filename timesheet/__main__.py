@@ -57,11 +57,10 @@ def csv_export(df):
         round = config["csv"]["round"]
     except:
         return None
+    df["element"] = df["Projekt"].map(elements)
+    df2 = df[df['element'].notnull()]
 
-    df2 = df[df.Projekt.isin(elements.keys())]
-    df2["Projekt"] = df2["Projekt"].map(elements)
-
-    df2 = df2.rename(columns={"Projekt": "element"})
+    #df2 = df2.rename(columns={"Projekt": "element"})
     df2 = df2.rename(columns={"Datum": "date"})
     df2 = df2.rename(columns={"Arbeitszeit": "hours"})
     df2.sort_values(by='date', inplace=True)
@@ -159,7 +158,7 @@ def read_excel(filename):
 
 def get_latest_input():
     try:
-        list_of_files = glob.glob('./T*.xls') # * means all if need specific format then *.csv
+        list_of_files = glob.glob('./t*.xls') # * means all if need specific format then *.csv
         return  Path(max(list_of_files, key=os.path.getctime))
     except:
         return None

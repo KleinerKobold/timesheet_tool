@@ -5,7 +5,7 @@ from pandas import ExcelFile
 import matplotlib.pyplot as plt
 from datetime import datetime
 from pathlib import Path 
-import yaml
+
 import glob
 import os
 import sys, getopt
@@ -13,76 +13,9 @@ import math
 import plotext as plt
 import math
 
-def get_config():
-    homedir = Path.home()
-    timesheet_dir = homedir / ".timesheet"
-    config_file = timesheet_dir / 'config.yaml'
-    try:
-        config=dict()
-        with open(config_file) as f:
-            config = yaml.load(f, Loader=yaml.FullLoader)
-            return config
-    except:
-        if not timesheet_dir.exists():
-            timesheet_dir.mkdir()
-        data = dict()
-        yaml.safe_dump(data)
-        with open(config_file, 'w') as outfile:
-            yaml.safe_dump(data, outfile, default_flow_style=False)
-            print(f"Keine config vorhanden, config wurde neu erstellt in {config_file}\n BITTE ANPASSEN")
-        pass
+from configer import get_config
+from csv_exporter import csv_export
 
-def round_hours(hours):
-    full_hours = math.floor(hours)
-    part = hours % 1
-    if part == 0 or part == 0.25 or part == 0.5 or part == 0.75:
-        return hours
-    if part < 1 and part > 0.75:
-        full_hours = full_hours + 1 
-        part = 0
-    if part < 0.75 and part > 0.5:
-        part = 0.75
-    if part < 0.5 and part > 0.25:
-        part = 0.5
-    if part > 0 and part < 0.25:        
-        part = 0.25
-    return full_hours+part
-
-def csv_export(df):
-    fileName, elements, round, codes = None, dict(), False, dict()
-    config = get_config()
-    try: 
-        fileName = config["csv"]["fileName"]
-        elements = config["csv"]["elements"]
-        round = config["csv"]["round"]
-    except:
-        return None
-    try:
-        codes = config["csv"]["codes"]
-    except:
-        print("config: no codes found")
-        pass
-    if codes: 
-        df["aktivitätencode"] = df["Projekt"].map(codes)
-        df["aktivitätencode"] = df["aktivitätencode"].fillna('')
-    df["element"] = df["Projekt"].map(elements)
-    df2 = df[df['element'].notnull()]
-
-    df2 = df2.rename(columns={"Datum": "date"})
-    df2 = df2.rename(columns={"Arbeitszeit": "hours"})
-    df2.sort_values(by='date', inplace=True)
-    
-    df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date','element','aktivitätencode']).sum()
-    if round: 
-        df_grp["hours"] = df_grp["hours"].map(round_hours)
-    df_grp["comment"] = ""
-    df_grp.to_csv(fileName,sep=';')
-
-    fd = pd.read_csv(fileName, sep=";")
-    fd["date"] = pd.to_datetime(fd["date"])
-    fd['date'] = fd['date'].dt.strftime('%d.%m.%Y')
-    fd.to_csv(fileName,sep=';', columns=["date","element","hours","comment","aktivitätencode"], header=True, index=False)
-    pass
 
 def format_excel(new_file, sheet_name):
     # Format excel

@@ -13,8 +13,8 @@ import math
 import plotext as plt
 import math
 
-from configer import get_config
-from csv_exporter import csv_export
+from .configer import get_config
+from .csv_exporter import csv_export
 
 
 def format_excel(new_file, sheet_name):

@@ -1,7 +1,7 @@
 import pandas as pd
 import math
 
-from configer import get_config
+from .configer import get_config
 
 def round_hours(hours):
     full_hours = math.floor(hours)
@@ -20,7 +20,7 @@ def round_hours(hours):
     return full_hours+part
 
 def csv_export(df):
-    fileName, elements, round, codes = None, dict(), False, dict()
+    fileName, elements, round, codes, time = None, dict(), False, dict(), None
     config = get_config()
     try: 
         fileName = config["csv"]["fileName"]
@@ -28,11 +28,17 @@ def csv_export(df):
         round = config["csv"]["round"]
     except:
         return None
+    
     try:
         codes = config["csv"]["codes"]
     except:
         print("config: no codes found")
+    
+    try:
+        time = config["csv"]["codes"]
+    except:
         pass
+
     if codes: 
         df["aktivitätencode"] = df["Projekt"].map(codes)
         df["aktivitätencode"] = df["aktivitätencode"].fillna('')

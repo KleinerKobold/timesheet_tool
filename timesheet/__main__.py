@@ -5,6 +5,7 @@ from pandas import ExcelFile
 import matplotlib.pyplot as plt
 from datetime import datetime
 from pathlib import Path 
+import argparse as _argparse
 
 import glob
 import os
@@ -44,21 +45,39 @@ def get_latest_input():
     except:
         return None
 
-def main(argv=None):
+def parse_arguments():
+    
+    parser = _argparse.ArgumentParser(
+        prog='timesheet',
+        usage='timesheet -i <inputfile> -t <days to export>',
+        description=
+        """This program takes the export of timesheet app
+        """,
+    )
+
+    parser.add_argument(
+        '-i', '--input',
+        type=str,
+        required=False,
+        default= None,
+        help='input file'
+    )
+    parser.add_argument(
+        '-t', 
+        type=int,
+        required=False,
+        help="Days to export in csv"
+    )
+
+    return parser.parse_args()
+
+def main():
 
     latest_file = get_latest_input()
-    try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile="])
-        
-        for opt, arg in opts:
-            if opt == '-h':
-                print('timesheet -i <inputfile>')
-                sys.exit()
-            elif opt in ("-i", "--ifile"):
-                latest_file = Path(arg[1:])
-    except:
-        pass
-
+    args = parse_arguments()
+    if args.input:
+        latest_file = args.input
+    
     if not latest_file or not latest_file.exists():
         print("Keine Datei gefunden")
         return -1
@@ -72,7 +91,10 @@ def main(argv=None):
     with pd.ExcelWriter(new_file, mode='w', engine='openpyxl') as writer:  
         df_excel.to_excel(writer, sheet_name= sheet_name)
 
-    csv_export(df)
+    days_to_export = 365
+    if args.t:
+        days_to_export = args.t
+    csv_export(df, days_to_export)
 
     #Information for cli
     print("\n#################\nWochen:\n")
@@ -111,7 +133,5 @@ def main(argv=None):
     format_excel(new_file, sheet_name)
 
 if __name__ == '__main__':
-    if len(sys.argv)>1:
-        main(sys.argv[1:])
     main()
    

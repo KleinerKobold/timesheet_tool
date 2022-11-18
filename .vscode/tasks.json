@@ -8,6 +8,7 @@
     },
     {
         "label": "Build",
+        "dependsOrder": "sequence",
         "dependsOn": [
             "python: build",
             "python: install"
@@ -17,12 +18,12 @@
         "label": "python: build",
         "command": "python3", // Could be any other shell command
         "args": ["-m", "build"],
-        "type": "shell"
+        "type": "shell",         
     },
     {
         "label": "python: install",
         "command": "pip3", // Could be any other shell command
-        "args": ["install", "${workspaceFolderBasename}"],
+        "args": ["install", "${workspaceFolder}"],
         "type": "shell"
     }
 ]

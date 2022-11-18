@@ -1,5 +1,6 @@
 import pandas as pd
 import math
+from datetime import datetime, timedelta
 
 from timesheet.configer import get_config
 
@@ -19,7 +20,13 @@ def round_hours(hours):
         part = 0.25
     return full_hours+part
 
-def csv_export(df):
+def filter_df(df, days_to_export=0):
+    date_to_export = datetime.today() - timedelta(days=days_to_export)
+    value_to_check = pd.Timestamp(date_to_export.year, date_to_export.month, date_to_export.day)
+    filter_mask = df['Datum'] > value_to_check
+    return df[filter_mask]
+
+def csv_export(df, days_to_export):
     fileName, elements, round, codes, time = None, dict(), False, dict(), None
     config = get_config()
     try: 
@@ -28,21 +35,17 @@ def csv_export(df):
         round = config["csv"]["round"]
     except:
         return None
-    
     try:
         codes = config["csv"]["codes"]
     except:
         print("config: no codes found")
-    
-    try:
-        time = config["csv"]["time"]
-    except:
-        pass
-
     if codes: 
         df["aktivitätencode"] = df["Projekt"].map(codes)
         df["aktivitätencode"] = df["aktivitätencode"].fillna('')
+    
     df["element"] = df["Projekt"].map(elements)
+    if days_to_export > 0:
+        df = filter_df(df, days_to_export)
     df2 = df[df['element'].notnull()]
 
     df2 = df2.rename(columns={"Datum": "date"})
@@ -53,6 +56,7 @@ def csv_export(df):
     if round: 
         df_grp["hours"] = df_grp["hours"].map(round_hours)
     df_grp["comment"] = ""
+
     df_grp.to_csv(fileName,sep=';')
 
     fd = pd.read_csv(fileName, sep=";")

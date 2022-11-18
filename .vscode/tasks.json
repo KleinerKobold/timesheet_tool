@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [{
+        "label": "echotest",
+        "command": "echo", // Could be any other shell command
+        "args": ["test"],
+        "type": "shell"
+    },
+    {
+        "label": "Build",
+        "dependsOn": [
+            "python: build",
+            "python: install"
+        ]
+    },
+    {
+        "label": "python: build",
+        "command": "python3", // Could be any other shell command
+        "args": ["-m", "build"],
+        "type": "shell"
+    },
+    {
+        "label": "python: install",
+        "command": "pip3", // Could be any other shell command
+        "args": ["install", "${workspaceFolderBasename}"],
+        "type": "shell"
+    }
+]
+}

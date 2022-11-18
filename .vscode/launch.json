@@ -5,13 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Generate",
+            "name": "Python: timesheet",
             "type": "python",
+            "preLaunchTask": "Build",            
             "request": "launch",
             "program": "timesheet",
             //"args": ["-i filename.xls"],
             "console": "integratedTerminal",
             "justMyCode": true
         }
+        
     ]
 }

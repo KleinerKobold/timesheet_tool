@@ -1,7 +1,7 @@
 import pandas as pd
 import math
 
-from .configer import get_config
+from timesheet.configer import get_config
 
 def round_hours(hours):
     full_hours = math.floor(hours)
@@ -35,7 +35,7 @@ def csv_export(df):
         print("config: no codes found")
     
     try:
-        time = config["csv"]["codes"]
+        time = config["csv"]["time"]
     except:
         pass
 

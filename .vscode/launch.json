@@ -9,7 +9,9 @@
             "type": "python",
             "preLaunchTask": "Build",            
             "request": "launch",
-            "program": "timesheet",
+            //"program": "timesheet",
+            "module": "timesheet",
+            "cwd": "${workspaceRoot}",
             //"args": ["-i filename.xls"],
             "console": "integratedTerminal",
             "justMyCode": true

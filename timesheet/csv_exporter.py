@@ -51,8 +51,8 @@ def csv_export(df, days_to_export):
     df2 = df2.rename(columns={"Datum": "date"})
     df2 = df2.rename(columns={"Arbeitszeit": "hours"})
     df2.sort_values(by='date', inplace=True)
-    
-    df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date','element','aktivitätencode']).sum()
+
+    df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date','element','aktivitätencode']).sum(numeric_only=True)
     if round: 
         df_grp["hours"] = df_grp["hours"].map(round_hours)
     df_grp["comment"] = ""

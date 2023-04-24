@@ -17,6 +17,8 @@ import math
 from timesheet.configer import get_config
 from timesheet.csv_exporter import csv_export
 from timesheet.excel import format_excel, read_excel
+from timesheet.pause import calc_breaks
+
 
 
 
@@ -127,6 +129,15 @@ def main():
     print(df_prj)
     print_plotext(df_prj.index.array.to_numpy(),df_prj['Arbeitszeit'].to_numpy())
 
+    # breaks
+    df_noDrop = read_excel(latest_file, drop=False)
+    df_breaks = calc_breaks(df_noDrop)
+    df_breaks = df_breaks.groupby(['Datum']).first()
+    selected_columns = ['Pausenzeit']
+    df_out = df_breaks[((df_breaks['Arbeitszeit_sum'] <= 8) & (df_breaks['Pausenzeit'] < 0.5) & (df_breaks['Pausenzeit'] > 0))|((df_breaks['Arbeitszeit_sum'] > 8) & (df_breaks['Pausenzeit'] < 0.75) & (df_breaks['Pausenzeit'] > 0))]
+    df_out = df_out.loc[:, selected_columns]
+    print(df_out)
+    
     print(f"Geschrieben: {new_file}")
 
     format_excel(new_file, sheet_name2)

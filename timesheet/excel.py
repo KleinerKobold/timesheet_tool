@@ -50,12 +50,14 @@ def format_excel(new_file, sheet_name):
 
     wb.save(new_file)
 
-def read_excel(filename):
+
+def read_excel(filename, drop=True):
     df = pd.read_excel(filename, sheet_name="Timesheet")
-    df.drop('Startzeit',axis='columns', inplace=True)
-    df.drop('Endzeit',axis='columns', inplace=True)
-    df.drop('Nummer',axis='columns', inplace=True)
-    df.drop('Dauer',axis='columns', inplace=True)
-    df.drop('Beschreibung',axis='columns', inplace=True)
+    if drop:
+        df.drop('Startzeit', axis='columns', inplace=True)
+        df.drop('Endzeit', axis='columns', inplace=True)
+        df.drop('Nummer', axis='columns', inplace=True)
+        df.drop('Dauer', axis='columns', inplace=True)
+        df.drop('Beschreibung', axis='columns', inplace=True)
     df = df.rename(columns={"Dauer (rel.)": "Arbeitszeit"})
     return df

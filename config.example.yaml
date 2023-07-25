@@ -14,4 +14,10 @@ csv:
     "Team 2 customer": "1002"
   codes:
     "Team 1": "Testing"
+  dividers:
+    divider:
+      name: "Team 1"
+      targets: 
+        "Team 2" : "percent"
+        "Team 3" : "percent"
 

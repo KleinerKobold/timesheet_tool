@@ -133,8 +133,8 @@ def main():
     df_noDrop = read_excel(latest_file, drop=False)
     df_breaks = calc_breaks(df_noDrop)
     df_breaks = df_breaks.groupby(['Datum']).first()
-    selected_columns = ['Pausenzeit']
-    df_out = df_breaks[((df_breaks['Arbeitszeit_sum'] <= 8) & (df_breaks['Pausenzeit'] < 0.5) & (df_breaks['Pausenzeit'] > 0))|((df_breaks['Arbeitszeit_sum'] > 8) & (df_breaks['Pausenzeit'] < 0.75) & (df_breaks['Pausenzeit'] > 0))]
+    selected_columns = ['Pausenzeit', 'Arbeitszeit_sum']
+    df_out = df_breaks[((df_breaks['Arbeitszeit_sum'] <= 9) & (df_breaks['Pausenzeit'] < 0.5) & (df_breaks['Pausenzeit'] > 0))|((df_breaks['Arbeitszeit_sum'] > 9) & (df_breaks['Pausenzeit'] < 0.75) & (df_breaks['Pausenzeit'] > 0))]
     df_out = df_out.loc[:, selected_columns]
     print(df_out)
     

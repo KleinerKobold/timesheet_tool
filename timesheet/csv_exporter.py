@@ -20,11 +20,15 @@ def round_hours(hours):
         part = 0.25
     return full_hours+part
 
+
 def filter_df(df, days_to_export=0):
+    if days_to_export == 0:
+        return df
     date_to_export = datetime.today() - timedelta(days=days_to_export)
     value_to_check = pd.Timestamp(date_to_export.year, date_to_export.month, date_to_export.day)
     filter_mask = df['Datum'] > value_to_check
     return df[filter_mask]
+
 
 def csv_export(df, days_to_export):
     fileName, elements, round, codes, time = None, dict(), False, dict(), None

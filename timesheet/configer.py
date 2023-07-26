@@ -1,12 +1,15 @@
 import yaml
 from pathlib import Path 
+import os
 
-def get_config():
+
+def get_config(config_file=None):
     homedir = Path.home()
     timesheet_dir = homedir / ".timesheet"
-    config_file = timesheet_dir / 'config.yaml'
+    if config_file is None:
+        config_file = timesheet_dir / 'config.yaml'
     try:
-        config=dict()
+        config = dict()
         with open(config_file) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
             return config
@@ -15,8 +18,9 @@ def get_config():
             timesheet_dir.mkdir()
         data = dict()
         yaml.safe_dump(data)
-        with open(config_file, 'w') as outfile:
-            yaml.safe_dump(data, outfile, default_flow_style=False)
-            print(f"Keine config vorhanden, config wurde neu erstellt in {config_file}\n BITTE ANPASSEN")
+        if not os.path.isfile(config_file):
+            with open(config_file, 'w') as outfile:
+                yaml.safe_dump(data, outfile, default_flow_style=False)
+                print(f"Keine config vorhanden, config wurde neu erstellt in {config_file}\n BITTE ANPASSEN")
         pass
 

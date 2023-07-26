@@ -25,6 +25,22 @@
         "command": "pip3", // Could be any other shell command
         "args": ["install", "${workspaceFolder}"],
         "type": "shell"
+    }, 
+    {
+        "label": "Run Tests",
+        "type": "shell",
+        "command": "python",
+        "args": [
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests"
+        ],
+        "group": {
+            "kind": "test",
+            "isDefault": true
+        }
     }
 ]
 }

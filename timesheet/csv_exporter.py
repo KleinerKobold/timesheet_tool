@@ -67,6 +67,12 @@ def csv_export(df, days_to_export):
         df["aktivitätencode"] = df["Projekt"].map(codes)
         df["aktivitätencode"] = df["aktivitätencode"].fillna('')
     
+    if "dividers" in config["csv"].keys():
+        for divider in config["csv"]["dividers"]:
+            project = divider['divider']['name']
+            new_projects = divider['divider']['targets']
+            df = divide(df, project, new_projects)
+
     df["element"] = df["Projekt"].map(elements)
     if days_to_export > 0:
         df = filter_df(df, days_to_export)

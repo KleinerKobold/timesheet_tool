@@ -3,6 +3,7 @@ import pandas as pd
 from unittest import mock
 from datetime import datetime, timedelta
 from config import config as test_config
+from config import config_nodividers as test_config_nodiv
 from pandas.testing import assert_frame_equal
 from timesheet.csv_exporter import csv_export, round_hours, filter_df, divide
 
@@ -25,10 +26,19 @@ class TestCsvExport(unittest.TestCase):
         df = pd.DataFrame(data)
         return df
 
-
     def test_csv_export_with_config(self):
         # Create a mock configuration
         config = test_config
+        self.csv_export_with_config(config)
+    
+    def test_csv_export_with_config_nodiv(self):
+        # Create a mock configuration
+        config = test_config_nodiv
+        self.csv_export_with_config(config)
+
+    def csv_export_with_config(self, tconfig):
+        # Create a mock configuration
+        config = tconfig
 
         # Mock the get_config function to return our custom configuration
         with mock.patch('timesheet.csv_exporter.get_config', return_value=config):

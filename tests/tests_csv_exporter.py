@@ -4,7 +4,7 @@ from unittest import mock
 from datetime import datetime, timedelta
 from config import config as test_config
 from pandas.testing import assert_frame_equal
-from timesheet.csv_exporter import csv_export, round_hours, filter_df
+from timesheet.csv_exporter import csv_export, round_hours, filter_df, divide
 
 
 class TestCsvExport(unittest.TestCase):
@@ -55,6 +55,36 @@ class TestCsvExport(unittest.TestCase):
         # Cleanup: Remove the test_output.csv file
         import os
         os.remove("test_output.csv")
+
+
+class TestDivideFunction(unittest.TestCase):
+    def setUp(self):
+        data = {
+            'Projekt': ["kBites", "Tra"],
+            'Datum': [datetime(2023, 7, 20), datetime(2023, 7, 21)],
+            'Arbeitszeit': [8.3, 5.7],
+        }
+        self.df = pd.DataFrame(data)
+
+    def test_divide_function(self):
+        searched_project = "kBites"
+        new_projects = {
+            "ProjektA": 1.5,
+            "ProjektB": 2.0,
+        }
+        result_df = divide(self.df, searched_project, new_projects)
+
+        self.assertEqual(len(result_df), 3)
+
+        # Test, ob die kopierten Zeilen korrekt sind
+        for project_name, multiplicator in new_projects.items():
+            filtered_df = self.df[self.df['Projekt'] == searched_project]
+            copied_df = filtered_df.copy()
+            copied_df['Projekt'] = project_name
+            copied_df['Arbeitszeit'] = copied_df['Arbeitszeit'] * multiplicator
+
+            for _, row in copied_df.iterrows():
+                self.assertTrue((result_df == row).all(axis=1).any())
 
 
 if __name__ == '__main__':

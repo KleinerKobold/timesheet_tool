@@ -4,6 +4,26 @@ from datetime import datetime, timedelta
 
 from timesheet.configer import get_config
 
+
+def divide(df: pd.DataFrame,
+           searched_project: str,
+           new_projects: dict) -> pd.DataFrame:
+
+    filtered_df = df[df['Projekt'] == searched_project]
+
+    for project_name in new_projects.keys():
+        copied_df = filtered_df.copy()
+        copied_df['Projekt'] = project_name
+        multiplicator = new_projects[project_name]
+        copied_df['Arbeitszeit'] = copied_df['Arbeitszeit'] * multiplicator
+
+        df = pd.concat([df, copied_df], ignore_index=True)
+
+    df = df[df['Projekt'] != searched_project]
+    print(df)
+    return df
+
+
 def round_hours(hours):
     full_hours = math.floor(hours)
     part = hours % 1

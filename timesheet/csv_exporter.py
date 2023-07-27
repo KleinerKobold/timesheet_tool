@@ -20,7 +20,6 @@ def divide(df: pd.DataFrame,
         df = pd.concat([df, copied_df], ignore_index=True)
 
     df = df[df['Projekt'] != searched_project]
-    print(df)
     return df
 
 

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from pathlib import Path 
 import argparse as _argparse
+import pkg_resources
 
 import glob
 import os
@@ -20,6 +21,11 @@ from timesheet.excel import format_excel, read_excel
 from timesheet.pause import calc_breaks
 
 
+def get_package_version(package_name):
+    try:
+        return pkg_resources.get_distribution(package_name).version
+    except pkg_resources.DistributionNotFound:
+        return None
 
 
 def print_plotext(items, values):
@@ -27,28 +33,31 @@ def print_plotext(items, values):
     if len(items) != len(values):
         print("Wrong data")
         return 
-    plt.bar(items, values, orientation = 'h', width = 3/5)
+    plt.bar(items, values, orientation='h', width=3/5)
     plt.title('Verteilung')
     plt.clc()
     plt.plotsize(100, 2 * len(items) + 4)
     plt.show()
-    
+
+
 def visual(percent):
     counter = math.floor(float(percent)/3)
     rval = ""
-    for i in range (counter):
+    for i in range(counter):
         rval += "#"
     return rval
+
 
 def get_latest_input():
     try:
         list_of_files = glob.glob('./t*.xls') # * means all if need specific format then *.csv
-        return  Path(max(list_of_files, key=os.path.getctime))
+        return Path(max(list_of_files, key=os.path.getctime))
     except:
         return None
 
+
 def parse_arguments():
-    
+
     parser = _argparse.ArgumentParser(
         prog='timesheet',
         usage='timesheet -i <inputfile> -t <days to export>',
@@ -61,7 +70,7 @@ def parse_arguments():
         '-i', '--input',
         type=str,
         required=False,
-        default= None,
+        default=None,
         help='input file'
     )
     parser.add_argument(
@@ -73,13 +82,14 @@ def parse_arguments():
 
     return parser.parse_args()
 
+
 def main():
 
     latest_file = get_latest_input()
     args = parse_arguments()
     if args.input:
         latest_file = args.input
-    
+
     if not latest_file or not latest_file.exists():
         print("Keine Datei gefunden")
         return -1
@@ -103,8 +113,9 @@ def main():
 
     df['Woche'] = df['Datum'].dt.isocalendar().week
 
-    df_week = df.groupby(['Woche']).agg({"Arbeitszeit": np.sum, "Datum": pd.Series.nunique})
-    df_week['Soll_Zeit']= df_week['Datum'] * 7.8
+    df_week = df.groupby(['Woche']).agg(
+        {"Arbeitszeit": np.sum, "Datum": pd.Series.nunique})
+    df_week['Soll_Zeit'] = df_week['Datum'] * 7.8
     df_week['Diff'] = df_week['Arbeitszeit'] - df_week['Soll_Zeit']
     print(df_week)
     with pd.ExcelWriter(new_file, mode='a', engine='openpyxl') as writer:  
@@ -112,7 +123,7 @@ def main():
     print(f"\n\tSumme der Differenz: {'{0:.2f}h'.format(df_week['Diff'].sum())}")
 
     df_perWeek = df.groupby(['Woche','Projekt']).agg({'Arbeitszeit':['sum']})
-    df_perWeek['percent'] = df_perWeek.Arbeitszeit['sum']/39 *100
+    df_perWeek['percent'] = df_perWeek.Arbeitszeit['sum']/39 * 100
     df_perWeek['percent'] = pd.Series(["{0:.0f}%".format(val) for val in df_perWeek['percent']], index = df_perWeek.index)
 
     sheet_name2 = "ProjectPerWeek"
@@ -136,7 +147,7 @@ def main():
     selected_columns = ['Pausenzeit', 'Arbeitszeit_sum']
     df_out = df_breaks[((df_breaks['Arbeitszeit_sum'] <= 9) & (df_breaks['Pausenzeit'] < 0.5) & (df_breaks['Pausenzeit'] > 0))|((df_breaks['Arbeitszeit_sum'] > 9) & (df_breaks['Pausenzeit'] < 0.75) & (df_breaks['Pausenzeit'] > 0))]
     df_out = df_out.loc[:, selected_columns]
-    print(df_out)
+    #print(df_out)
     
     print(f"Geschrieben: {new_file}")
 
@@ -144,5 +155,11 @@ def main():
     format_excel(new_file, sheet_name)
 
 if __name__ == '__main__':
+    package_name = "timesheet_tool"
+    try: 
+        version = get_package_version(package_name)
+        print(f"The current Version of {package_name} is {version}.")
+    except:
+        print(f"{package_name} is not installed.")
     main()
    

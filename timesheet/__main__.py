@@ -88,9 +88,9 @@ def main():
     latest_file = get_latest_input()
     args = parse_arguments()
     if args.input:
-        latest_file = args.input
+        latest_file = args.input.strip()
 
-    if not latest_file or not latest_file.exists():
+    if not latest_file or not os.path.exists(latest_file):
         print("Keine Datei gefunden")
         return -1
     print(f"Benutzte Daten: {latest_file}")
@@ -130,15 +130,28 @@ def main():
     with pd.ExcelWriter(new_file, mode='a', engine='openpyxl') as writer:  
         df_perWeek.to_excel(writer, sheet_name= sheet_name2)
 
-    df_prj = df.groupby(['Projekt']).agg({'Arbeitszeit':['sum']})
-    df_prj['percent']  = (df_prj['Arbeitszeit'] / df_prj['Arbeitszeit'].sum()) * 100
-    df_prj['percent_visual'] = df_prj.apply(lambda row : visual(row['percent']), axis = 1)
-    df_prj['percent'] = pd.Series(["{0:.2f}%".format(val) for val in df_prj['percent']], index = df_prj.index)
+    def by_Project(df):
+        df_prj = df.groupby(['Projekt']).agg({'Arbeitszeit':['sum']})
+        df_prj['percent']  = (df_prj['Arbeitszeit'] / df_prj['Arbeitszeit'].sum()) * 100
+        df_prj['percent_visual'] = df_prj.apply(lambda row : visual(row['percent']), axis = 1)
+        df_prj['percent'] = pd.Series(["{0:.2f}%".format(val) for val in df_prj['percent']], index = df_prj.index)
 
-    #df_prj.drop('Woche',axis='columns', inplace=True)
-    print("\nVerteilung:")
-    print(df_prj)
-    print_plotext(df_prj.index.array.to_numpy(),df_prj['Arbeitszeit'].to_numpy())
+        #df_prj.drop('Woche',axis='columns', inplace=True)
+        print("\nVerteilung:")
+        print(df_prj)
+        print_plotext(df_prj.index.array.to_numpy(),df_prj['Arbeitszeit'].to_numpy())
+    by_Project(df)
+
+    def by_Project_lastMonth(df):
+        df_prj = df.groupby(['Projekt']).agg({'Arbeitszeit':['sum']})
+        df_prj['percent']  = (df_prj['Arbeitszeit'] / df_prj['Arbeitszeit'].sum()) * 100
+        df_prj['percent_visual'] = df_prj.apply(lambda row : visual(row['percent']), axis = 1)
+        df_prj['percent'] = pd.Series(["{0:.2f}%".format(val) for val in df_prj['percent']], index = df_prj.index)
+
+        #df_prj.drop('Woche',axis='columns', inplace=True)
+        print("\nVerteilung:")
+        print(df_prj)
+        print_plotext(df_prj.index.array.to_numpy(),df_prj['Arbeitszeit'].to_numpy())
 
     # breaks
     df_noDrop = read_excel(latest_file, drop=False)

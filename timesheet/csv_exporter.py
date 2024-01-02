@@ -1,5 +1,5 @@
 import pandas as pd
-import math
+import math, os
 from datetime import datetime, timedelta
 
 from timesheet.configer import get_config
@@ -81,15 +81,16 @@ def csv_export(df, days_to_export):
     df2 = df2.rename(columns={"Arbeitszeit": "hours"})
     df2.sort_values(by='date', inplace=True)
 
-    df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date','element','aktivitätencode']).sum(numeric_only=True)
+    df_grp = df2.sort_values(['date','element'],ascending=False).groupby(['date', 'element', 'aktivitätencode']).sum(numeric_only=True)
     if round: 
         df_grp["hours"] = df_grp["hours"].map(round_hours)
     df_grp["comment"] = ""
 
-    df_grp.to_csv(fileName,sep=';')
+    df_grp.to_csv(fileName, sep=';')
 
     fd = pd.read_csv(fileName, sep=";")
     fd["date"] = pd.to_datetime(fd["date"])
     fd['date'] = fd['date'].dt.strftime('%d.%m.%Y')
-    fd.to_csv(fileName,sep=';', columns=["date","element","hours","comment","aktivitätencode"], header=True, index=False)
+    fd.to_csv(fileName, sep=';', columns=["date", "element", "hours", "comment", "aktivitätencode"], header=True, index=False)
+    print(f"CSV exported to {os.path.abspath(fileName)}")
     pass

@@ -60,4 +60,5 @@ def read_excel(filename, drop=True):
         df.drop('Dauer', axis='columns', inplace=True)
         df.drop('Beschreibung', axis='columns', inplace=True)
     df = df.rename(columns={"Dauer (rel.)": "Arbeitszeit"})
+    #print(df.info())
     return df

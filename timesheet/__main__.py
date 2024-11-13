@@ -1,24 +1,23 @@
 import numpy as np
 import pandas as pd
-from pandas import ExcelWriter
-from pandas import ExcelFile
-import matplotlib.pyplot as plt
-from datetime import datetime
-from pathlib import Path 
+#import matplotlib.pyplot as plt
+from pathlib import Path
 import argparse as _argparse
 import pkg_resources
 
 import glob
-import os
-import sys, getopt
+if __debug__:
+    import os, sys
+    sys.path.append(f'{os.getcwd()}')
 import math
 import plotext as plt
-import math
 
-from timesheet.configer import get_config
+
+#from timesheet.configer import get_config
 from timesheet.csv_exporter import csv_export
 from timesheet.excel import format_excel, read_excel
 from timesheet.pause import calc_breaks
+from timesheet.pause import calc_intervalls
 
 
 def get_package_version(package_name):
@@ -50,7 +49,7 @@ def visual(percent):
 
 def get_latest_input():
     try:
-        list_of_files = glob.glob('./t*.xls') # * means all if need specific format then *.csv
+        list_of_files = glob.glob('./*imesheet*.xls') # * means all if need specific format then *.csv
         return Path(max(list_of_files, key=os.path.getctime))
     except:
         return None
@@ -62,7 +61,7 @@ def parse_arguments():
         prog='timesheet',
         usage='timesheet -i <inputfile> -t <days to export>',
         description=
-        """This program takes the export of timesheet app
+        """This program takes the export of timesheet app v0.3
         """,
     )
 
@@ -161,6 +160,9 @@ def main():
     df_out = df_breaks[((df_breaks['Arbeitszeit_sum'] <= 9) & (df_breaks['Pausenzeit'] < 0.5) & (df_breaks['Pausenzeit'] > 0))|((df_breaks['Arbeitszeit_sum'] > 9) & (df_breaks['Pausenzeit'] < 0.75) & (df_breaks['Pausenzeit'] > 0))]
     df_out = df_out.loc[:, selected_columns]
     #print(df_out)
+    #df_intervalls=calc_intervalls(df_noDrop)
+    #with pd.ExcelWriter(new_file, mode='a', engine='openpyxl') as writer:  
+    #    df_intervalls.to_excel(writer, sheet_name= "Intervalle")
     
     print(f"Geschrieben: {new_file}")
 
